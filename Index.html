@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página con Animación y Confeti</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body {
+            background: url('Background.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .no-blur {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .background-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url('Background.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(5px);
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            animation: fadeIn 2s ease forwards, floatUp 3s infinite ease-in-out;
+        }
+
+        .image-box {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(241, 255, 42, 0);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+        }
+
+        .image-box:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        .small-image {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            display: none;
+            animation: float 3s ease-in-out infinite, smallFloat 6s infinite ease-in-out;
+        }
+
+        .show {
+            display: block;
+            opacity: 0;
+            animation: fadeInSmall 1s forwards;
+        }
+
+        @keyframes fadeInSmall {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes smallFloat {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Contenedor para el texto */
+        .text-container {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #ffffff;
+            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8),
+                         0px 0px 30px rgba(255, 255, 255, 0.5);
+            font-size: 2rem;
+            animation: fadeInText 1.5s ease-out forwards, hideText 3s 2s forwards;
+        }
+
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes hideText {
+            to { opacity: 0; }
+        }
+
+        /* Estilos para la pantalla negra y el contenedor de la imagen */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Contenedor blanco para la imagen en la ventana emergente */
+        .image-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .overlay img {
+            width: 400px;
+            height: 400px;
+            cursor: pointer;
+        }
+
+        /* Texto japonés oculto inicialmente */
+        .japanese-text {
+            position: absolute;
+            writing-mode: vertical-rl;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'Arial', sans-serif;
+            user-select: none;
+            display: none; /* Oculto inicialmente */
+            z-index: 1; /* Para asegurar que esté por encima del fondo */
+        }
+
+        /* Clase para mostrar el texto japonés después del clic */
+        .show-text {
+            display: block;
+            opacity: 0;
+            animation: fadeInText 1.5s forwards;
+        }
+
+        /* Modificar posiciones de las imágenes pequeñas */
+        #smallImage2 {
+            position: fixed;
+            top: 10%;
+            right: 5%;
+        }
+
+        #smallImage3 {
+            position: fixed;
+            bottom: 5%;
+            right: 0;
+        }
+
+        #smallImage4 {
+            position: fixed;
+            bottom: 5%;
+            left: 0;
+        }
+
+        /* Pantalla de contraseña */
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            flex-direction: column;
+        }
+
+        .password-screen h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .password-screen input {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 2px solid #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 300px;
+            text-align: center;
+        }
+
+        .password-screen button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-screen button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Imagen de la esquina durante la pantalla de contraseña */
+        .corner-image {
+            position: absolute;
+            top: 2%;
+            right: 2%;
+            width: 350px;
+            height: 350px;
+        }
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Pantalla de contraseña -->
+    <div class="password-screen" id="passwordScreen">
+        <h2>Ingresa la contraseña</h2>
+        <input type="password" id="passwordInput" placeholder="Contraseña...">
+        <button id="passwordButton">Entrar</button>
+        <img class="corner-image" src="imagen_2024-09-22_173712221.png" alt="Imagen de esquina">
+    </div>
+
+    <div class="no-blur" style="display:none" id="mainContent">
+        <!-- Contenedor del texto -->
+        <div class="text-container">
+            <h1>¡Presiona la imagen!</h1>
+        </div>
+
+        <div class="container">
+            <div class="image-box" id="mainImage">
+                <img src="Sobre.png" alt="Imagen inicial">
+            </div>
+        </div>
+    </div>
+
+    <!-- Fondo difuminado -->
+    <div class="background-blur"></div>
+
+    <!-- Imágenes pequeñas separadas y en posiciones diferentes -->
+    <img class="small-image" id="smallImage2" src="lagatafea.png" alt="Imagen pequeña 2">
+    <img class="small-image" id="smallImage3" src="ChileMorron (1).png" alt="Imagen pequeña 3">
+    <img class="small-image" id="smallImage4" src="ChileMorron (1).png" alt="Imagen pequeña 4">
+
+    <!-- Texto japonés disperso en el fondo -->
+    <div class="japanese-text">愛してる</div> <!-- Te amo -->
+    <div class="japanese-text">あなたの目は美しい</div> <!-- Tus ojos son lindos -->
+    <div class="japanese-text">男の子も女の子も関係ない</div> <!-- No importa si eres chico o chica -->
+    <div class="japanese-text">心を手に入れたい</div> <!-- Quiero tener tu corazón -->
+    <div class="japanese-text">君を抱きしめたい</div> <!-- Quiero abrazarte -->
+
+    <!-- Contenedor para la imagen central en el modo negro -->
+    <div class="overlay" id="overlay">
+        <div class="image-container">
+            <img id="centralImage" src="ImagenCentral1.png" alt="Imagen central">
+        </div>
+    </div>
+
+    <script>
+        // Referencias a los elementos de la pantalla de contraseña
+        const passwordScreen = document.getElementById('passwordScreen');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordButton = document.getElementById('passwordButton');
+        const mainContent = document.getElementById('mainContent');
+        const cornerImage = document.querySelector('.corner-image');
+
+        // Contraseña correcta
+        const correctPassword = 'AleXnaho123';
+
+        // Al hacer clic en el botón de "Entrar"
+        passwordButton.addEventListener('click', function() {
+            if (passwordInput.value === correctPassword) {
+                // Ocultar la pantalla de contraseña y mostrar el contenido principal
+                passwordScreen.style.display = 'none';
+                mainContent.style.display = 'block';
+                cornerImage.style.display = 'none'; // Ocultar la imagen de la esquina
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        });
+
+        // También permitir la verificación con la tecla "Enter"
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                passwordButton.click();
+            }
+        });
+
+        // Código original a partir de aquí...
+        // Sonidos y música con eventos onload y onloaderror para depuración
+        var clickEffect = new Howl({
+            src: ['click.mp3'],
+            onload: function() {
+                console.log('Click sound loaded successfully!');
+            },
+            onloaderror: function(id, error) {
+                console.error('Error loading click sound:', error);
+            }
+        });
+
+        var confettiSound = new Howl({
+            src: ['confetti.mp3'],
+            onload: function() {
+                console.log('Confetti sound loaded successfully!');
+            },
+            onloaderror: function(id, error) {
+                console.error('Error loading confetti sound:', error);
+            }
+        });
+
+        var funSound = new Howl({
+            src: ['win.mp3'],
+            onload: function() {
+                console.log('Fun sound loaded successfully!');
+            },
+            onloaderror: function(id, error) {
+                console.error('Error loading fun sound:', error);
+            }
+        });
+
+        var shortSound = new Howl({
+            src: ['brak.mp3'],
+            volume: 0.8,
+            onload: function() {
+                console.log('Short sound loaded successfully!');
+            },
+            onloaderror: function(id, error) {
+                console.error('Error loading short sound:', error);
+            }
+        });
+
+        var music = new Howl({
+            src: ['background-music.mp3'],
+            volume: 0.5,
+            loop: true,
+            onload: function() {
+                console.log('Background music loaded successfully!');
+            },
+            onloaderror: function(id, error) {
+                console.error('Error loading background music:', error);
+            }
+        });
+
+        var mutedMusic = new Howl({
+            src: ['muted-background-music.mp3'],
+            volume: 0.1,
+            loop: true,
+            onload: function() {
+                console.log('Muted background music loaded successfully!');
+            },
+            onloaderror: function(id, error) {
+                console.error('Error loading muted background music:', error);
+            }
+        });
+
+        var imageBox = document.getElementById('mainImage');
+        var smallImages = document.querySelectorAll('.small-image');
+        var overlay = document.getElementById('overlay');
+        var centralImage = document.getElementById('centralImage');
+        var isImageOne = true;
+        var isImageChanged = false;
+
+        var japaneseTexts = document.querySelectorAll('.japanese-text'); // Textos japoneses
+
+        // Función para lanzar confeti
+        function launchConfetti(element) {
+            party.confetti(element, {
+                count: 100,
+                spread: 80,
+                size: 1.2,
+            });
+            confettiSound.play();  // Reproduce el sonido del confeti
+        }
+
+        // Acción en la imagen principal
+        imageBox.addEventListener('click', function() {
+            console.log('User clicked the image.');
+            
+            // Intenta reproducir el sonido y la música después del clic
+            clickEffect.play();
+            music.play();
+
+            if (!isImageChanged) {
+                // Cambia la imagen y añade confeti
+                if (isImageOne) {
+                    imageBox.querySelector('img').src = 'Flore.png'; 
+                    imageBox.style.width = '400px'; 
+                    imageBox.style.height = '400px'; 
+                    launchConfetti(imageBox);
+                } else {
+                    imageBox.querySelector('img').src = 'Sobre.png'; 
+                    imageBox.style.width = '200px';
+                    imageBox.style.height = '200px';
+                    launchConfetti(imageBox);
+                }
+                isImageOne = !isImageOne;
+                isImageChanged = true;
+
+                // Animación de vibración
+                anime({
+                    targets: '#mainImage',
+                    translateX: [
+                        { value: -10, duration: 50 },
+                        { value: 10, duration: 50 },
+                        { value: -10, duration: 50 },
+                        { value: 0, duration: 50 }
+                    ],
+                    complete: function() {
+                        launchConfetti(imageBox);
+                    }
+                });
+
+                // Mostrar imágenes pequeñas y palabras en japonés
+                smallImages.forEach(function(image) {
+                    image.classList.add('show');
+                });
+                japaneseTexts.forEach(function(text) {
+                    text.classList.add('show-text');
+                });
+
+                // Posicionamiento de los textos japoneses
+                const textPositions = [
+                    { left: '5%', top: '10%', fontSize: '1.5rem' },
+                    { left: '90%', top: '10%', fontSize: '1.5rem' },
+                    { left: '3%', top: '40%', fontSize: '1.5rem' },
+                    { left: '90%', top: '80%', fontSize: '1.5rem' },
+                    { left: '45%', top: '5%', fontSize: '1.5rem' }
+                ];
+
+                japaneseTexts.forEach(function(text, index) {
+                    text.style.left = textPositions[index].left;
+                    text.style.top = textPositions[index].top;
+                    text.style.fontSize = textPositions[index].fontSize;
+                });
+            }
+        });
+
+        // Acción en la imagen pequeña 3 (overlay con la imagen central)
+        document.getElementById('smallImage3').addEventListener('click', function() {
+            overlay.style.display = 'flex';
+            music.stop();         // Pausa la música actual
+            mutedMusic.play();    // Reproduce música a volumen bajo
+
+            shortSound.play();    // Sonido breve al abrir el overlay
+
+            centralImage.src = 'pixil-frame-0.png';
+            centralImage.addEventListener('click', function() {
+                clickEffect.play(); // Sonido de clic
+                centralImage.src = 'Pero 2.png'; // Cambia a otra imagen
+
+                setTimeout(function() {
+                    centralImage.src = 'pixil-frame-0.png'; // Volver a la imagen inicial
+                }, 1000);
+            });
+
+            // Cerrar el overlay al hacer clic fuera de la imagen central
+            overlay.addEventListener('click', function(e) {
+                if (e.target !== centralImage) {
+                    overlay.style.display = 'none';
+                    mutedMusic.stop();  // Detener la música en volumen bajo
+                    music.play();       // Reanudar la música original
+                }
+            });
+        });
+
+        // Animación para la imagen pequeña 4 (sube y baja)
+        document.getElementById('smallImage4').addEventListener('click', function() {
+            anime({
+                targets: '#smallImage4',
+                translateY: {
+                    value: -800,
+                    duration: 2000,
+                    easing: 'easeInQuad'
+                },
+                opacity: {
+                    value: 0,
+                    duration: 500,
+                    easing: 'linear'
+                },
+                complete: function() {
+                    launchConfetti(document.getElementById('smallImage4'));
+
+                    // Regresar desde abajo
+                    anime({
+                        targets: '#smallImage4',
+                        translateY: [800, 0],
+                        opacity: 1,
+                        duration: 1000,
+                        easing: 'easeOutBounce',
+                        complete: function() {
+                            funSound.play();  // Reproducir sonido al volver
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
